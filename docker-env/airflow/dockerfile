@@ -1,0 +1,14 @@
+FROM ubuntu:20.04
+
+WORKDIR /root
+COPY ./init.sh /root/airflow/init.sh
+
+RUN apt update && apt upgrade -y
+RUN apt install git net-tools sudo vim -y
+RUN apt install build-essential checkinstall -y
+
+RUN apt install -y python3.8
+RUN apt install -y python3-dev python3-pip
+RUN pip3 install apache-airflow
+# CMD ["/bin/bash","-c","/airflow/init.sh"]
+EXPOSE 8888

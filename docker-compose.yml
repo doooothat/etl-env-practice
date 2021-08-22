@@ -1,0 +1,70 @@
+version: '3'
+
+services:
+  # database:
+  #   ports:
+  #     - "3306:3306"
+  #   expose:
+  #     - "10315"
+  #   networks:
+  #     ananlytic-env:
+  #       ipv4_address: 172.22.0.2
+  #   volumes:
+  #     - ./analytics-prediction/database/init.sql:/docker-entrypoint-initdb.d/init.sql
+  #     - ${ANALYTICS_PREDICTION_PATH}/mysql_dump_sql_files/:/app/mysql_dump_sql_files
+  #   restart: always
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: root
+  #   command:  -P 3306
+  #   build:
+  #     context: ./analytics-prediction/database
+  #     dockerfile: Dockerfile
+  # redis:
+  #   image: redis:latest
+  #   command: redis-server --requirepass changeme --port 6379
+  #   ports:
+  #     - "6379:6379"
+  #   networks:
+  #     ananlytic-env:
+  #       ipv4_address: 172.22.0.3
+  airflow:
+    ports:
+      - "8080:8080"
+    # networks:
+    #   ananlytic-env:
+    #     ipv4_address: 172.22.0.4
+    # volumes:
+    #   - ${ANALYTICS_PREDICTION_PATH}/prediction/:/app/prediction
+    #   - ${ANALYTICS_PREDICTION_PATH}/analytics_flask_auth/:/app/analytics_flask_auth
+    #   - ${GOOGLE_APPLICATION_CREDENTIALS}/:/googlekey/fluted-airline-109810-7afe68a44bb8.json
+      # - ${ANALYTICS_PREDICTION_PATH}/mysql_dump_sql_files/:/app/mysql_dump_sql_files
+      # - ${ANALYTICS_PREDICTION_PATH}/mysql_migration_sql_files/:/app/mysql_migration_sql_files
+    # environment:
+    #   - ANALYTICS_PREDICTION_PATH=/app/prediction/.env
+    build:
+      context: ./docker-env/airflow
+      dockerfile: Dockerfile
+    # command: ['/bin/bash','/app/backend.sh']
+    command:
+        - bash -C "airflow scheduler  && airflow webserver --port 8080 -D"
+#   analytics-prediction-frontend:
+#     ports:
+#       - "3000:3000"
+#     networks:
+#       ananlytic-env:
+#         ipv4_address: 172.22.0.5
+#     volumes:
+#       - ${ANALYTICS_PREDICTION_PATH}/frontend:/app
+#       - ./analytics-prediction/frontend/frontend.sh:/app/frontend.sh
+#     build:
+#       context: ./analytics-prediction/frontend
+#       dockerfile: Dockerfile
+#     stdin_open: true
+#     tty: true
+#     command: ['/bin/bash', '/app/frontend.sh']
+# networks:
+#   ananlytic-env:
+#     ipam:
+#       driver: default
+#       config:
+#         - subnet: 172.22.0.0/16
